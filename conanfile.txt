@@ -1,0 +1,11 @@
+[requires]
+nlohmann_json/3.11.2
+boost/1.81.0
+fmt/10.0.0
+
+[test_requires]
+gtest/cci.20210126
+
+[generators]
+CMakeDeps
+CMakeToolchain
