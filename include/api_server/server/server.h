@@ -23,13 +23,14 @@ private:
     /// @brief Attempts to read and decode HTTP requests received on the socket.
     /// Decoded requests are forwarded to the router and the response is written back to the socket.
     /// [Concurrent execution]
-    void process_tcp_session(boost::asio::ip::tcp::socket& socket);
+    void process_tcp_session(boost::asio::ip::tcp::socket& socket, const uint8_t session_id);
 
     const Logger& m_logger;
     Router& m_router;
     boost::asio::io_context m_context{1};
     boost::asio::ip::address m_address;
     boost::asio::ip::tcp::acceptor m_acceptor;
+    uint8_t m_session_id{0u};
 };
 
 } // namespace server

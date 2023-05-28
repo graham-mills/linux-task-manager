@@ -3,6 +3,7 @@
 
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/beast.hpp>
+#include <fmt/format.h>
 #include <string>
 #include <thread>
 
@@ -30,13 +31,16 @@ void Server::start()
     {
         tcp::socket socket{m_context};
         m_acceptor.accept(socket);
-        std::thread{[this](tcp::socket&& socket) { process_tcp_session(socket); }, std::move(socket)}.detach();
+        ++m_session_id;
+        std::thread{[this, id = m_session_id](tcp::socket&& socket) { process_tcp_session(socket, id); },
+                    std::move(socket)}
+            .detach();
     }
 }
 
-void Server::process_tcp_session(boost::asio::ip::tcp::socket& socket)
+void Server::process_tcp_session(boost::asio::ip::tcp::socket& socket, const uint8_t session_id)
 {
-    m_logger.debug("Server::process_tcp_session");
+    m_logger.info(fmt::format("Server[session{}] started", session_id));
     bb::error_code error;
     bb::flat_buffer buffer;
 
@@ -57,11 +61,16 @@ void Server::process_tcp_session(boost::asio::ip::tcp::socket& socket)
             break;
         }
 
-        std::cout << request << "\n";
+        std::stringstream ss;
+        ss << request;
+        m_logger.info(fmt::format("Server[session{}] request:\n{}", session_id, ss.str()));
         auto response = m_router.process_http_request(request);
-        std::cout << response << "\n";
-        response.prepare_payload();
 
+        ss.clear();
+        ss << response;
+        m_logger.info(fmt::format("Server[session{}] response:\n{}", session_id, ss.str()));
+
+        response.prepare_payload();
         bb::http::write(socket, response, error);
 
         if (error)
@@ -73,7 +82,7 @@ void Server::process_tcp_session(boost::asio::ip::tcp::socket& socket)
         keep_alive = response.keep_alive();
     }
     socket.shutdown(boost::asio::ip::tcp::socket::shutdown_send, error);
-    m_logger.debug("Server::process_tcp_session shutdown");
+    m_logger.info(fmt::format("Server[session{}] ended", session_id));
 }
 
 } // namespace server
