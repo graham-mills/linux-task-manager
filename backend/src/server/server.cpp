@@ -70,6 +70,7 @@ void Server::process_tcp_session(boost::asio::ip::tcp::socket& socket, const uin
         ss << response;
         m_logger.info(fmt::format("Server[session{}] response:\n{}", session_id, ss.str()));
 
+        response.set(bb::http::field::access_control_allow_origin, "*");
         response.prepare_payload();
         bb::http::write(socket, response, error);
 
