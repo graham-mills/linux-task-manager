@@ -22,7 +22,9 @@ std::optional<uint32_t> parse_kb_value(const std::string& value_with_kb_units)
     std::smatch match;
     std::regex_search(value_with_kb_units, match, regex);
     if (match.size() > 1)
+    {
         return std::stoul(match.str(1));
+    }
     return std::nullopt;
 }
 
@@ -204,6 +206,12 @@ bool Monitor::is_proc_dir(const fs::directory_entry& entry) const
 void Monitor::read_proc_status(const fs::path& proc_dir, ProcSnapshot& snapshot)
 {
     const auto status_file = proc_dir / "status";
+    if (!fs::exists(status_file))
+    {
+        // Expected if proc has been removed
+        return;
+    }
+
     std::ifstream input(status_file);
     const auto status_map = parse_dictionary_file(input);
     if (const auto iter = status_map.find("Pid"); iter != status_map.end())
@@ -237,7 +245,14 @@ void Monitor::read_proc_status(const fs::path& proc_dir, ProcSnapshot& snapshot)
 void Monitor::read_proc_stat(const fs::path& proc_dir, ProcSnapshot& snapshot)
 {
     const auto stat_file = proc_dir / "stat";
+    if (!fs::exists(stat_file))
+    {
+        // Expected if proc has been removed
+        return;
+    }
+
     std::ifstream input(stat_file);
+
     std::string column;
     // Read utime (column 14) and stime (column 15), skip anything else
     for (auto i = 1; i <= 15; ++i)
@@ -262,6 +277,7 @@ void Monitor::read_proc_cmdline(const std::filesystem::path& proc_dir, data::Pro
     const auto cmdline_file = proc_dir / "cmdline";
     if (!fs::exists(cmdline_file))
     {
+        // Expected if proc has been removed
         return;
     }
     std::ifstream input{cmdline_file};

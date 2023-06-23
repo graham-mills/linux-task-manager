@@ -18,7 +18,7 @@ namespace filesystem
 class Monitor
 {
     static constexpr std::chrono::milliseconds POLL_INTERVAL{
-        2000};                             // The delay between attempting to read the filesystem
+        1000};                             // The delay between attempting to read the filesystem
     static constexpr uint8_t CLK_TCK{100}; // Hard-coded for now, but should be read from system
 
 public:
