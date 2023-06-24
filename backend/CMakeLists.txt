@@ -14,8 +14,10 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 find_package(fmt REQUIRED)
 find_package(nlohmann_json REQUIRED)
+find_package(Boost REQUIRED)
 
 include_directories(include)
+include_directories(${Boost_INCLUDE_DIRS})
 
 add_library(api_server_lib
             src/filesystem/monitor.cpp
