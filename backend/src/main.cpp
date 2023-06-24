@@ -12,7 +12,7 @@
 
 using namespace std::chrono_literals;
 
-int main(int argc, char *argv[])
+int main()
 {
 
     StdStreamLogger logger{LogLevel::Debug};
