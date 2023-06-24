@@ -1,0 +1,32 @@
+.card {
+   --border-radius: 14px;
+   --card-background-color: #fff;
+
+   box-shadow: 0 2px 8px rgba(139, 139, 139, 0.25);
+   max-width: 45rem;
+   margin: auto;
+   margin-top: 1rem;
+}
+
+.header {
+   border-top-left-radius: var(--border-radius);
+   border-top-right-radius: var(--border-radius);
+   padding: 0.1rem 1rem;
+   background: #4d4d4d;
+   color: #fff;
+}
+
+.header h4 {
+   margin: 0;
+}
+
+.content {
+   padding: 1rem;
+   background: var(--card-background-color);
+}
+.footer {
+   background: var(--card-background-color);
+   border-bottom-left-radius: var(--border-radius);
+   border-bottom-right-radius: var(--border-radius);
+   height: var(--border-radius);
+}

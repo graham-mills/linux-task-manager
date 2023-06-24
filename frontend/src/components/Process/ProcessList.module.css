@@ -1,0 +1,17 @@
+.proc-table {
+   width: 100%;
+   text-align: left;
+   border-spacing: 0;
+   height: 5rem;
+   overflow: scroll;
+   margin-top: 0.5rem;
+   white-space: pre;
+}
+
+.proc-table thead {
+   text-align: center;
+}
+
+.proc-table tr:nth-child(even) {
+   background: #ccc;
+}
