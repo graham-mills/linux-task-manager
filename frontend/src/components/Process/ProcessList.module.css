@@ -12,6 +12,10 @@
    text-align: center;
 }
 
+.proc-table th.sortable {
+   cursor: pointer;
+}
+
 .proc-table tr:nth-child(even) {
    background: #ccc;
 }
