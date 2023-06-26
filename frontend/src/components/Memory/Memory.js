@@ -36,10 +36,10 @@ const Memory = ({ connStatus }) => {
       pollApi();
    }, [pollApi]);
 
-   const memTotalMB = (memTotal / 1000).toFixed(0);
-   const memTotalGB = (memTotalMB / 1000).toFixed(2);
-   const memFreeMB = (memFree / 1000).toFixed(0);
-   const memFreeGB = (memFreeMB / 1000).toFixed(2); 
+   const memTotalMB = (memTotal / 1024).toFixed(0);
+   const memTotalGB = (memTotalMB / 1024).toFixed(2);
+   const memFreeMB = (memFree / 1024).toFixed(0);
+   const memFreeGB = (memFreeMB / 1024).toFixed(2); 
    const memUsedMB = memTotalMB - memFreeMB;
    const memUsedGB = (memTotalGB - memFreeGB).toFixed(2);
 
