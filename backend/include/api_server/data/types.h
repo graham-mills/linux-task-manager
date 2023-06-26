@@ -46,6 +46,7 @@ inline nlohmann::json to_json(const Uptime& uptime)
 ///                 ../cmdline
 struct ProcSnapshot
 {
+    double snapshot_time{0.0};
     int32_t pid{0u};
     int32_t ppid{0u};
     std::string name;

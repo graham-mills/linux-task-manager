@@ -174,6 +174,7 @@ void Monitor::read_proc_files()
     for (const auto pid : pids)
     {
         ProcSnapshot snapshot;
+        snapshot.snapshot_time = m_datastore.get_uptime().total_seconds;
         snapshot.pid = pid;
         const auto proc_dir = fs::path(dir::proc) / std::to_string(pid);
         read_proc_status(proc_dir, snapshot);
@@ -267,9 +268,17 @@ void Monitor::read_proc_stat(const fs::path& proc_dir, ProcSnapshot& snapshot)
             snapshot.stime = std::stoul(column);
         }
     }
-    const double total_scheduled_time_s = static_cast<double>(snapshot.utime + snapshot.stime) / CLK_TCK;
-    const float cpu_usage_percent = 100.0f * total_scheduled_time_s / (POLL_INTERVAL.count() / 1000.0);
-    snapshot.cpu_usage_percent = boost::algorithm::clamp(cpu_usage_percent, 0.0f, 100.0f);
+
+    const auto prev_snapshot = m_datastore.get_proc_snapshot(snapshot.pid);
+    if (prev_snapshot.has_value())
+    {
+        const double uptime_delta_s = snapshot.snapshot_time - prev_snapshot->snapshot_time;
+        const double prev_scheduled_time_s = static_cast<double>(prev_snapshot->utime + prev_snapshot->stime) / CLK_TCK;
+        const double latest_scheduled_time_s = static_cast<double>(snapshot.utime + snapshot.stime) / CLK_TCK;
+        const double scheduled_time_delta_s = latest_scheduled_time_s - prev_scheduled_time_s;
+        const float cpu_usage_percent = (100.0 * scheduled_time_delta_s) / uptime_delta_s;
+        snapshot.cpu_usage_percent = boost::algorithm::clamp(cpu_usage_percent, 0.0f, 100.0f);
+    }
 }
 
 void Monitor::read_proc_cmdline(const std::filesystem::path& proc_dir, data::ProcSnapshot& snapshot)

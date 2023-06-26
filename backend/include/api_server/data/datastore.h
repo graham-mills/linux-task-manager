@@ -61,6 +61,7 @@ public:
 
     std::optional<CpuSnapshot> get_cpu_snapshot(const std::string& id)
     {
+        const std::unique_lock lock{m_cpu_snapshots_mutex};
         if (m_cpu_snapshots.find(id) != m_cpu_snapshots.end())
             return m_cpu_snapshots[id];
         return std::nullopt;
@@ -102,6 +103,14 @@ public:
         std::transform(m_proc_snapshots.cbegin(), m_proc_snapshots.cend(), std::back_inserter(snapshots),
                        [](const auto& pair) { return pair.second; });
         return snapshots;
+    }
+
+    std::optional<ProcSnapshot> get_proc_snapshot(const uint32_t pid)
+    {
+        const std::unique_lock lock{m_proc_snapshots_mutex};
+        if (m_proc_snapshots.find(pid) != m_proc_snapshots.end())
+            return m_proc_snapshots[pid];
+        return std::nullopt;
     }
 
 private:
