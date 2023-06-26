@@ -1,0 +1,11 @@
+.conn-status-ok {
+    color: #008000;
+}
+
+.conn-status-not-ok {
+    color: #ff0000;
+}
+
+.conn-status-unknown {
+    color: #ffa500;
+}

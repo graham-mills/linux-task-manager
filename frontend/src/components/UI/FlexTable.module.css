@@ -1,0 +1,44 @@
+.table {
+   display: flex;
+   flex-direction: row;
+   flex-wrap: wrap;
+}
+
+.table ~ .table {
+   /** Added margin for stacked tables **/
+   margin-top: 0.5rem;
+}
+.column {
+   display: inline-block;
+}
+.row {
+   display: flex;
+   flex-direction: row;
+   flex-wrap: wrap;
+   width: 100%;
+   box-sizing: border-box;
+}
+.label,
+.value {
+   display: inline-block;
+   position: relative;
+   text-align: center;
+}
+.label {
+   float: left;
+   width: 40%;
+   min-width: 40%;
+}
+.value {
+   float: right;
+   width: 60%;
+   min-width: 60%;
+}
+
+.table-col-2 .column {
+   min-width: 50%;
+}
+
+.table-col-3 .column {
+   min-width: 33%;
+}
