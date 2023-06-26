@@ -21,7 +21,7 @@ const Overview = ({ setConnStatus, connStatus }) => {
          return;
       }
       const data = await response.json();
-      setUptime(data.formatted);
+      setUptime(data);
       setConnStatus(ConnectionStatus.Ok);
    }, [setConnStatus]);
 
@@ -41,14 +41,17 @@ const Overview = ({ setConnStatus, connStatus }) => {
 
    // Apply style to connection status value, depending on the current status
    let connStatusStyle = classes["conn-status-unknown"];
-   if (connStatus === ConnectionStatus.Ok)
-   {
+   if (connStatus === ConnectionStatus.Ok) {
       connStatusStyle = classes["conn-status-ok"];
-   }
-   else if (connStatus === ConnectionStatus.ServerOffline || connStatus.Error)
-   {
+   } else if (
+      connStatus === ConnectionStatus.ServerOffline ||
+      connStatus.Error
+   ) {
       connStatusStyle = classes["conn-status-not-ok"];
    }
+
+   const uptimeDays = Math.floor(uptime.hours / 24);
+   const uptimeTodaysHours = uptime.hours - uptimeDays * 24;
 
    return (
       <Card title="System">
@@ -64,7 +67,13 @@ const Overview = ({ setConnStatus, connStatus }) => {
             <Column>
                <Row>
                   <Label>Uptime</Label>
-                  <Value>{uptime}</Value>
+                  <Value>{uptime.formatted}</Value>
+               </Row>
+               <Row>
+                  <Label></Label>
+                  <Value>
+                     {uptimeDays}d{uptimeTodaysHours}h{uptime.minutes}m
+                  </Value>
                </Row>
             </Column>
          </FlexTable>
