@@ -1,31 +1,44 @@
 # Linux Task Manager
 
-Experimenting with [Boost.Beast](https://github.com/boostorg/beast) to create a REST API for viewing Linux processes.
+Experimenting with [Boost.Beast](https://github.com/boostorg/beast) to create a REST API for viewing Linux processes. The repo also includes a React based web app to query the server and display process information.
 
 ## Build Dependencies
 
-* [CMake](https://cmake.org/)
-* [Conan](https://conan.io/)
+For the API server:
+- [CMake](https://cmake.org/)
+- [Conan](https://conan.io/)
     * [fmt](https://conan.io/center/fmt)
     * [boost](https://conan.io/center/boost)
     * [nlohmann/json](https://conan.io/center/nlohmann_json)
     * [GTest](https://conan.io/center/gtest)
 
-## Development Dependencies
+For the React app:
 
-* clang-format
-* cppcheck
+- [node](https://nodejs.org/)
+- [npm](https://www.npmjs.com/)
+    * [React](https://react.dev/)
 
-## Docker
+## Building
 
-A Dockerfile is provided to build and run the server within a separate dev environment, without needing to install any of the build dependencies directly.
+1. In `backend`, run `make install` and then `make build-release`
+2. In `frontend`, run `npm install` and then `npm build`
 
-* Run `make docker-build` to build the repo
-* Run `make docker-serve` to run the server
+## Running
 
-Once the server is running, try the following endpoints:
+With Docker:
 
-- GET:`http://localhost:8080/v0/uptime`
-- GET:`http://localhost:8080/v0/cpus`
-- GET:`http://localhost:8080/v0/mem`
-- GET:`http://localhost:8080/v0/procs`
+1. Run `docker-compose up --build`
+
+Without Docker:
+
+1. In `backend`, run `make serve`
+2. In `frontend`, run `npm run start`
+
+Once running, browse to `http://localhost:3000` to view the React app or try one of the following endpoints:
+
+- GET: `http://localhost:8080/api/uptime`
+- GET: `http://localhost:8080/api/cpus`
+- GET: `http://localhost:8080/api/mem`
+- GET: `http://localhost:8080/api/procs`
+
+
