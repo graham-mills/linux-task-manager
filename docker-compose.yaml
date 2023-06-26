@@ -2,7 +2,10 @@ version: "3.8"
 services:
   client-and-server-deployment:
     image: grhmdev/linux-task-manager
-    build: .
+    container_name: linux-task-manager
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile
     ports:
     - 3000:3000/tcp
     - 8080:8080/tcp

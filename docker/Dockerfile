@@ -18,7 +18,7 @@ ENV CLIENT_PORT=3000
 EXPOSE 3000
 
 COPY ./frontend/build .
-COPY ./entrypoint.sh /
+COPY ./docker/entrypoint.sh /
 RUN chmod +x /entrypoint.sh
 
 ENTRYPOINT [ "/entrypoint.sh" ]
