@@ -7,12 +7,20 @@ install:
 build:
 	cd build; \
 	cmake .. -DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug; \
-	cmake --build . --config Debug; \
-	cd ..;
+	cmake --build . --config Debug;
+
+.PHONY: build-release
+build-release:
+	mkdir -p build
+	conan install . --output-folder=build --build=missing -pr conanprofile-release.txt
+	cd build; \
+	cmake .. -DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release; \
+	cmake --build . --config Release; \
+	cpack;
 
 .PHONY: serve
 serve:
-	./build/api_server
+	./build/api_server 0.0.0.0 8080
 
 .PHONY: format
 format:
@@ -25,12 +33,3 @@ lint:
 .PHONY: clean
 clean:
 	rm -rf build/
-
-.PHONY: docker-build
-docker-build:
-	docker-compose run --build task-manager-dev install
-	docker-compose run task-manager-dev build
-
-.PHONY: docker-serve
-docker-serve:
-	docker-compose run --build task-manager-dev serve

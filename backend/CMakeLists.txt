@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(api_server)
+project(api_server VERSION 0.1.0)
 
 # Default to C++17
 if(NOT CMAKE_CXX_STANDARD)
@@ -29,3 +29,15 @@ add_executable(api_server src/main.cpp)
 target_link_libraries(api_server api_server_lib)
 
 add_subdirectory(test)
+
+# Create deb pkg
+
+install(TARGETS api_server
+    RUNTIME DESTINATION "/usr/bin"
+    LIBRARY DESTINATION "/opt/api_server"
+    DESTINATION "/opt/api_server"
+)
+
+SET(CPACK_GENERATOR "DEB")
+SET(CPACK_DEBIAN_PACKAGE_MAINTAINER "grhmdev@users.noreply.github.com")
+INCLUDE(CPack)

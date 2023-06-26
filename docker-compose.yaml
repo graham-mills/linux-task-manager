@@ -1,9 +1,13 @@
 version: "3.8"
 services:
-  task-manager-dev:
+  client-and-server-deployment:
+    image: grhmdev/linux-task-manager
     build: .
     ports:
-      - 8080:8080
-      - 3000:3000
-    volumes:
-      - .:/workspace
+    - 3000:3000/tcp
+    - 8080:8080/tcp
+    environment:
+      - API_SERVER_IP=0.0.0.0
+      - API_SERVER_PORT=8080
+      - CLIENT_IP=0.0.0.0
+      - CLIENT_PORT=3000

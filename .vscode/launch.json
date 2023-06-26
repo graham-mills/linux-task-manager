@@ -6,7 +6,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/backend/build/api_server",
-            "args": [],
+            "args": ["0.0.0.0", "8080"],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",
             "environment": [],
