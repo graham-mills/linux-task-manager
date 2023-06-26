@@ -15,7 +15,7 @@ Router::Router(const Logger& logger) : m_logger{logger}
 void Router::add_route(const bb::http::verb verb, const std::string& resource, const Endpoint endpoint)
 {
     const auto key = route_key(verb, resource);
-    m_logger.info("Router::add_route " + key);
+    m_logger.debug("Router::add_route " + key);
     m_routes[key] = endpoint;
 }
 

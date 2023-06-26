@@ -29,6 +29,7 @@ private:
     Router& m_router;
     boost::asio::io_context m_context{1};
     boost::asio::ip::address m_address;
+    const uint16_t m_port;
     boost::asio::ip::tcp::acceptor m_acceptor;
     uint8_t m_session_id{0u};
 };

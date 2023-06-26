@@ -21,10 +21,10 @@ public:
     ApiController(const Logger& logger, RouteHolder& router, data::DataStore& datastore)
         : m_logger{logger}, m_datastore{datastore}
     {
-        BIND_ENDPOINT(bb::http::verb::get, "/v0/uptime", get_uptime);
-        BIND_ENDPOINT(bb::http::verb::get, "/v0/cpus", get_cpus);
-        BIND_ENDPOINT(bb::http::verb::get, "/v0/procs", get_procs);
-        BIND_ENDPOINT(bb::http::verb::get, "/v0/mem", get_mem);
+        BIND_ENDPOINT(bb::http::verb::get, "/api/uptime", get_uptime);
+        BIND_ENDPOINT(bb::http::verb::get, "/api/cpus", get_cpus);
+        BIND_ENDPOINT(bb::http::verb::get, "/api/procs", get_procs);
+        BIND_ENDPOINT(bb::http::verb::get, "/api/mem", get_mem);
     };
 
     /// @brief GET /uptime
