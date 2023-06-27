@@ -6,7 +6,7 @@ import { Config } from "../../config/config";
 import { ConnectionStatus } from "../../context/conn-status";
 
 const Overview = ({ setConnStatus, connStatus }) => {
-   const [uptime, setUptime] = useState("00:00:00");
+   const [uptime, setUptime] = useState(null);
 
    const fetchUptime = useCallback(async () => {
       let response = null;
@@ -23,21 +23,21 @@ const Overview = ({ setConnStatus, connStatus }) => {
       const data = await response.json();
       setUptime(data);
       setConnStatus(ConnectionStatus.Ok);
-   }, [setConnStatus]);
-
-   const pollApi = useCallback(async () => {
-      setTimeout(
-         pollApi,
-         connStatus === ConnectionStatus.Ok
-            ? Config.POLL_PERIOD_MS
-            : Config.SLOW_POLL_PERIOD_MS
-      );
-      fetchUptime();
-   }, [connStatus, fetchUptime]);
+   }, [setUptime, setConnStatus]);
 
    useEffect(() => {
-      pollApi();
-   }, [pollApi]);
+      const pollPeriod =
+         connStatus === ConnectionStatus.Ok
+            ? Config.POLL_PERIOD_MS
+            : Config.SLOW_POLL_PERIOD_MS;
+      const interval = setInterval(fetchUptime, pollPeriod);
+      return () => {
+         clearInterval(interval);
+      };
+   }, [connStatus, fetchUptime]);
+   useEffect(() => {
+      fetchUptime();
+   }, [fetchUptime]);
 
    // Apply style to connection status value, depending on the current status
    let connStatusStyle = classes["conn-status-unknown"];
@@ -50,8 +50,12 @@ const Overview = ({ setConnStatus, connStatus }) => {
       connStatusStyle = classes["conn-status-not-ok"];
    }
 
-   const uptimeDays = Math.floor(uptime.hours / 24);
-   const uptimeTodaysHours = uptime.hours - uptimeDays * 24;
+   let uptimeDaysHoursMinutes = "";
+   if (uptime) {
+      const days = Math.floor(uptime.hours / 24);
+      const hours = uptime.hours - days * 24;
+      uptimeDaysHoursMinutes = `${days}d${hours}h${uptime.minutes}m`;
+   }
 
    return (
       <Card title="System">
@@ -67,13 +71,11 @@ const Overview = ({ setConnStatus, connStatus }) => {
             <Column>
                <Row>
                   <Label>Uptime</Label>
-                  <Value>{uptime.formatted}</Value>
+                  <Value>{uptime && uptime.formatted}</Value>
                </Row>
                <Row>
                   <Label></Label>
-                  <Value>
-                     {uptimeDays}d{uptimeTodaysHours}h{uptime.minutes}m
-                  </Value>
+                  <Value>{uptimeDaysHoursMinutes}</Value>
                </Row>
             </Column>
          </FlexTable>

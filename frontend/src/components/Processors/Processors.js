@@ -20,18 +20,18 @@ const Processors = ({ connStatus }) => {
       } catch (error) {
          return;
       }
-   }, []);
-
-   const pollApi = useCallback(() => {
-      if (connStatus === ConnectionStatus.Ok) {
-         fetchCpuSnapshots();
-      }
-      setTimeout(pollApi, Config.POLL_PERIOD_MS);
-   }, [connStatus, fetchCpuSnapshots]);
+   }, [setCpuSnapshots]);
 
    useEffect(() => {
-      pollApi();
-   }, [pollApi]);
+      const interval = setInterval(() => {
+         if (connStatus === ConnectionStatus.Ok) {
+            fetchCpuSnapshots();
+         }
+      }, Config.POLL_PERIOD_MS);
+      return () => {
+         clearInterval(interval);
+      };
+   }, [connStatus, fetchCpuSnapshots]);
 
    const cpuRows = cpuSnapshots.map((cpu) => (
       <Row key={cpu.id}>

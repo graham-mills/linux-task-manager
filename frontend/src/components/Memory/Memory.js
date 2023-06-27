@@ -10,7 +10,7 @@ const Memory = ({ connStatus }) => {
    const [memFree, setMemFree] = useState(0);
    const [memUsage, setMemUsage] = useState(0);
 
-   const fetchMemorySnapshot = async () => {
+   const fetchMemorySnapshot = useCallback(async () => {
       try {
          const response = await fetch(Config.Endpoints.Mem);
          if (!response.ok) {
@@ -23,23 +23,23 @@ const Memory = ({ connStatus }) => {
       } catch (error) {
          return;
       }
-   };
-
-   const pollApi = useCallback(() => {
-      if (connStatus === ConnectionStatus.Ok) {
-         fetchMemorySnapshot();
-      }
-      setTimeout(pollApi, Config.POLL_PERIOD_MS);
-   }, [connStatus]);
+   }, [setMemFree, setMemTotal, setMemUsage]);
 
    useEffect(() => {
-      pollApi();
-   }, [pollApi]);
+      const interval = setInterval(() => {
+         if (connStatus === ConnectionStatus.Ok) {
+            fetchMemorySnapshot();
+         }
+      }, Config.POLL_PERIOD_MS);
+      return () => {
+         clearInterval(interval);
+      };
+   }, [connStatus, fetchMemorySnapshot]);
 
    const memTotalMB = (memTotal / 1024).toFixed(0);
    const memTotalGB = (memTotalMB / 1024).toFixed(2);
    const memFreeMB = (memFree / 1024).toFixed(0);
-   const memFreeGB = (memFreeMB / 1024).toFixed(2); 
+   const memFreeGB = (memFreeMB / 1024).toFixed(2);
    const memUsedMB = memTotalMB - memFreeMB;
    const memUsedGB = (memTotalGB - memFreeGB).toFixed(2);
 
