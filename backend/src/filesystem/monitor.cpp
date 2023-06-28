@@ -83,7 +83,7 @@ void Monitor::read_system_meminfo()
         if (result)
             snapshot.total_memory_kB = result.value();
     }
-    if (const auto iter = params.find("MemFree"); iter != params.end())
+    if (const auto iter = params.find("MemAvailable"); iter != params.end())
     {
         const auto result = parse_kb_value(iter->second);
         if (result)
