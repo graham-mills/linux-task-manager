@@ -22,7 +22,6 @@ const TreeTable = ({ processes }) => {
                {proc.pidPrefix}
                {proc.pid}
             </td>
-            <td>{proc.ppid}</td>
             <td>{proc.name}</td>
             <td>{proc.cpu_usage_percent.toFixed(1)}%</td>
             <td>{proc.mem_usage_percent.toFixed(1)}%</td>
@@ -33,7 +32,7 @@ const TreeTable = ({ processes }) => {
    const tableHeaderRow = (
       <tr>
          <th>PID</th>
-         <th>PPID</th>
+         <th>Name</th>
          <th>CPU</th>
          <th>Mem</th>
       </tr>
