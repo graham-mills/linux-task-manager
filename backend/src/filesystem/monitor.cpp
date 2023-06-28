@@ -34,7 +34,7 @@ Monitor::Monitor(Logger& logger, data::DataStore& datastore) : m_logger{logger},
 
 void Monitor::start()
 {
-    m_logger.info("Monitor::start");
+    m_logger.debug("Monitor::start");
     auto monitor = true;
     while (monitor)
     {
@@ -227,7 +227,7 @@ void Monitor::read_proc_status(const fs::path& proc_dir, ProcSnapshot& snapshot)
     {
         snapshot.name = iter->second;
     }
-    if (const auto iter = status_map.find("VmSize"); iter != status_map.end())
+    if (const auto iter = status_map.find("VmRSS"); iter != status_map.end())
     {
         const auto mem_usage_kb = parse_kb_value(iter->second);
         if (mem_usage_kb.has_value())
