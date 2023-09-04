@@ -49,35 +49,35 @@ describe("Memory component", () => {
       render(<Memory connStatus={ConnectionStatus.Ok} />);
       await advanceTimeByPollPeriod();
 
-      await screen.findByText("1.00 GB");
+      expect(await screen.findByText("1.00 GB")).toBeVisible();
    });
 
    test("should display total memory in MBs", async () => {
       render(<Memory connStatus={ConnectionStatus.Ok} />);
       await advanceTimeByPollPeriod();
 
-      await screen.findByText("1024 MB");
+      expect(await screen.findByText("1024 MB")).toBeVisible();
    });
 
    test("should display free memory in GBs", async () => {
       render(<Memory connStatus={ConnectionStatus.Ok} />);
       await advanceTimeByPollPeriod();
 
-      await screen.findByText("0.75 GB");
+      expect(await screen.findByText("0.75 GB")).toBeVisible();
    });
 
    test("should display free memory in MBs", async () => {
       render(<Memory connStatus={ConnectionStatus.Ok} />);
       await advanceTimeByPollPeriod();
 
-      await screen.findByText("768 MB");
+      expect(await screen.findByText("768 MB")).toBeVisible();
    });
 
    test("should display usage percentage", async () => {
       render(<Memory connStatus={ConnectionStatus.Ok} />);
       await advanceTimeByPollPeriod();
 
-      await screen.findByText("25%");
+      expect(await screen.findByText("25%")).toBeVisible();
    });
 
    test("should update displayed data when memory snapshot changes", async () => {
@@ -95,8 +95,8 @@ describe("Memory component", () => {
       });
       await advanceTimeByPollPeriod();
 
-      await screen.findByText("4.00 GB");
-      await screen.findByText("1.00 GB");
-      await screen.findByText("75%");
+      expect(await screen.findByText("4.00 GB")).toBeVisible();
+      expect(await screen.findByText("1.00 GB")).toBeVisible();
+      expect(await screen.findByText("75%")).toBeVisible();
    });
 });
