@@ -1,37 +1,39 @@
-import { useEffect, useCallback, useState } from "react";
+import { useEffect, useState } from "react";
 import Card from "../UI/Card";
 import { Config } from "../../config/config";
 import MeterBar from "../UI/MeterBar";
 import { Column, FlexTable, Label, Row, Value } from "../UI/FlexTable";
 import { ConnectionStatus } from "../../context/conn-status";
+import axios from "axios";
+
+const fetchCpuSnapshots = async () => {
+   return axios
+      .get(Config.Endpoints.Cpus)
+      .then((response) => response.data)
+      .catch((error) => {
+         console.log(error);
+      });
+};
 
 const Processors = ({ connStatus }) => {
    const [cpuSnapshots, setCpuSnapshots] = useState([]);
 
-   const fetchCpuSnapshots = useCallback(async () => {
-      try {
-         const response = await fetch(Config.Endpoints.Cpus);
-         if (!response.ok) {
-            return;
-         }
-         let data = await response.json();
-         data.sort((a, b) => (a.id > b.id ? 1 : -1));
-         setCpuSnapshots(data);
-      } catch (error) {
+   useEffect(() => {
+      if (connStatus !== ConnectionStatus.Ok) {
          return;
       }
-   }, [setCpuSnapshots]);
-
-   useEffect(() => {
       const interval = setInterval(() => {
-         if (connStatus === ConnectionStatus.Ok) {
-            fetchCpuSnapshots();
-         }
+         fetchCpuSnapshots().then((data) => {
+            if (data) {
+               data.sort((a, b) => (a.id > b.id ? 1 : -1));
+               setCpuSnapshots(data);
+            }
+         });
       }, Config.POLL_PERIOD_MS);
       return () => {
          clearInterval(interval);
       };
-   }, [connStatus, fetchCpuSnapshots]);
+   }, [connStatus]);
 
    const cpuRows = cpuSnapshots.map((cpu) => (
       <Row key={cpu.id}>
@@ -41,17 +43,15 @@ const Processors = ({ connStatus }) => {
          </Value>
       </Row>
    ));
+   // Split the rows in half to be displayed in 2 adjacent columns
    const midpoint = Math.ceil(cpuRows.length / 2);
    const cpuRowsColumn1 = cpuRows.slice(0, midpoint);
    const cpuRowsColumn2 = cpuRows.slice(midpoint, cpuRows.length);
 
    let totalUsage = 0;
-   if (cpuSnapshots.length > 0) {
-      const aggregateUsage = cpuSnapshots.reduce(
-         (sum, cpu) => (sum += cpu.usage_percent),
-         0
-      );
-      totalUsage = (aggregateUsage / (cpuSnapshots.length * 100)) * 100;
+   const aggregateCpu = cpuSnapshots.find((cpu) => cpu.id === "cpu");
+   if (aggregateCpu) {
+      totalUsage = aggregateCpu.usage_percent;
    }
 
    return (
