@@ -18,7 +18,7 @@ const Overview = ({ setConnStatus, connStatus }) => {
             setConnStatus(ConnectionStatus.Ok);
          })
          .catch((error) => {
-            console.log(error);
+            console.error(error);
             setConnStatus(ConnectionStatus.ServerOffline);
          });
    }, [setUptime, setConnStatus]);
