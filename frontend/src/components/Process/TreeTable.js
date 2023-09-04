@@ -1,5 +1,16 @@
 import classes from "./ProcessList.module.css";
 
+const EmptyRow = () => (
+   <>
+      <tr>
+         <td />
+         <td />
+         <td />
+         <td />
+      </tr>
+   </>
+);
+
 const TreeTable = ({ processes }) => {
    const findChildProcs = (parent, nestPrefix) => {
       const children = processes.filter((child) => child.ppid === parent.pid);
@@ -13,7 +24,7 @@ const TreeTable = ({ processes }) => {
    };
 
    const rootProcs = processes.filter((proc) => proc.ppid === 0);
-   let tableRows = "";
+   let tableRows = <EmptyRow/>
    if (rootProcs.length > 0) {
       const allProcs = [rootProcs[0], ...findChildProcs(rootProcs[0], " ")];
       tableRows = allProcs.map((proc) => (

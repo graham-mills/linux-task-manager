@@ -1,6 +1,18 @@
 import classes from "./ProcessList.module.css";
 import { useState } from "react";
 
+const EmptyRow = () => (
+   <>
+      <tr>
+         <td />
+         <td />
+         <td />
+         <td />
+         <td />
+      </tr>
+   </>
+);
+
 const TableHeader = ({
    label,
    sortName,
@@ -47,15 +59,20 @@ const ListTable = ({ processes }) => {
       }
       return 0;
    });
-   const tableRows = sortedProcs.map((proc) => (
-      <tr key={proc.pid} title={proc.command}>
-         <td>{proc.pid}</td>
-         <td>{proc.ppid}</td>
-         <td>{proc.name}</td>
-         <td>{proc.cpu_usage_percent.toFixed(1)}%</td>
-         <td>{proc.mem_usage_percent.toFixed(1)}%</td>
-      </tr>
-   ));
+   const tableRows =
+      sortedProcs.length > 0 ? (
+         sortedProcs.map((proc) => (
+            <tr key={proc.pid} title={proc.command}>
+               <td>{proc.pid}</td>
+               <td>{proc.ppid}</td>
+               <td>{proc.name}</td>
+               <td>{proc.cpu_usage_percent.toFixed(1)}%</td>
+               <td>{proc.mem_usage_percent.toFixed(1)}%</td>
+            </tr>
+         ))
+      ) : (
+         <EmptyRow />
+      );
 
    const tableHeaderRow = (
       <tr>

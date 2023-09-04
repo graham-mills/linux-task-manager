@@ -9,25 +9,6 @@ import { Config } from "../../config/config";
 jest.useFakeTimers();
 jest.mock("axios");
 
-const PROC_SNAPSHOTS = [
-   {
-      command: "abc",
-      cpu_usage_percent: 0.0,
-      mem_usage_percent: 0.009020090103149414,
-      name: "abc",
-      pid: 1,
-      ppid: 0,
-   },
-   {
-      command: "node",
-      cpu_usage_percent: 0.0,
-      mem_usage_percent: 4.866338729858398,
-      name: "node",
-      pid: 7,
-      ppid: 1,
-   },
-];
-
 // Advances fake timers by POLL_PERIOD_MS and
 // runs any pending promise jobs
 const advanceTimeByPollPeriod = async () => {
@@ -39,7 +20,7 @@ const advanceTimeByPollPeriod = async () => {
 
 beforeEach(() => {
    axios.get.mockResolvedValue({
-      data: PROC_SNAPSHOTS,
+      data: [],
    });
 });
 
