@@ -4,27 +4,27 @@ import { useEffect, useCallback, useState } from "react";
 import { FlexTable, Column, Row, Label, Value } from "../UI/FlexTable";
 import { Config } from "../../config/config";
 import { ConnectionStatus } from "../../context/conn-status";
+import axios from "axios";
 
 const Overview = ({ setConnStatus, connStatus }) => {
    const [uptime, setUptime] = useState(null);
 
+   // Attempt to fetch uptime and update the connection status
    const fetchUptime = useCallback(async () => {
-      let response = null;
-      try {
-         response = await fetch(Config.Endpoints.Uptime);
-      } catch (error) {
-         setConnStatus(ConnectionStatus.ServerOffline);
-         return;
-      }
-      if (!response.ok) {
-         setConnStatus(ConnectionStatus.Error);
-         return;
-      }
-      const data = await response.json();
-      setUptime(data);
-      setConnStatus(ConnectionStatus.Ok);
+      axios
+         .get(Config.Endpoints.Uptime)
+         .then((response) => {
+            setUptime(response.data);
+            setConnStatus(ConnectionStatus.Ok);
+         })
+         .catch((error) => {
+            console.log(error);
+            setConnStatus(ConnectionStatus.ServerOffline);
+         });
    }, [setUptime, setConnStatus]);
 
+   // Periodically poll for uptime - this is used as the heartbeat to
+   // determine connection status to the server
    useEffect(() => {
       const pollPeriod =
          connStatus === ConnectionStatus.Ok
@@ -35,9 +35,13 @@ const Overview = ({ setConnStatus, connStatus }) => {
          clearInterval(interval);
       };
    }, [connStatus, fetchUptime]);
+
+   // Try to get uptime immediately on first render, before poll
+   // period has expired
    useEffect(() => {
       fetchUptime();
-   }, [fetchUptime]);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+   }, []);
 
    // Apply style to connection status value, depending on the current status
    let connStatusStyle = classes["conn-status-unknown"];
