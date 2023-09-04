@@ -6,34 +6,33 @@ import Button from "../UI/Button";
 import { Column, FlexTable, Label, Row, Value } from "../UI/FlexTable";
 import TreeTable from "./TreeTable";
 import ListTable from "./ListTable";
+import axios from "axios";
+
+const fetchProcs = async () => {
+   return axios
+      .get(Config.Endpoints.Procs)
+      .then((response) => response.data)
+      .catch((error) => {
+         console.error(error);
+      });
+};
 
 const ProcessList = ({ connStatus }) => {
    const [displayAsTree, setDisplayAsTree] = useState(false);
    const [processes, setProcesses] = useState([]);
 
-   const fetchProcs = useCallback(async () => {
-      try {
-         const response = await fetch(Config.Endpoints.Procs);
-         if (!response.ok) {
-            return;
-         }
-         const data = await response.json();
-         setProcesses(data);
-      } catch (error) {
-         return;
-      }
-   }, [setProcesses]);
-
    useEffect(() => {
+      if (connStatus !== ConnectionStatus.Ok) return;
+
       const interval = setInterval(() => {
-         if (connStatus === ConnectionStatus.Ok) {
-            fetchProcs();
-         }
+         fetchProcs().then((data) => {
+            setProcesses(data);
+         });
       }, Config.POLL_PERIOD_MS);
       return () => {
          clearInterval(interval);
       };
-   }, [connStatus, fetchProcs]);
+   }, [connStatus]);
 
    return (
       <Card title="Processes">
