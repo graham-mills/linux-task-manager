@@ -1,51 +1,53 @@
-import { useEffect, useCallback, useState } from "react";
-import Card from "../UI/Card";
+import { useEffect, useState } from "react";
 import { Config } from "../../config/config";
+import Card from "../UI/Card";
 import MeterBar from "../UI/MeterBar";
 import { Column, FlexTable, Label, Row, Value } from "../UI/FlexTable";
 import { ConnectionStatus } from "../../context/conn-status";
+import axios from "axios";
+
+const fetchMemorySnapshot = async () => {
+   return axios
+      .get(Config.Endpoints.Mem)
+      .then((response) => response.data)
+      .catch((error) => {
+         console.log(error);
+      });
+};
 
 const Memory = ({ connStatus }) => {
-   const [memTotal, setMemTotal] = useState(0);
-   const [memFree, setMemFree] = useState(0);
-   const [memUsage, setMemUsage] = useState(0);
-
-   const fetchMemorySnapshot = useCallback(async () => {
-      try {
-         const response = await fetch(Config.Endpoints.Mem);
-         if (!response.ok) {
-            return;
-         }
-         const data = await response.json();
-         setMemTotal(data.total_memory_kB);
-         setMemFree(data.free_memory_kB);
-         setMemUsage(data.usage_percent.toFixed(0));
-      } catch (error) {
-         return;
-      }
-   }, [setMemFree, setMemTotal, setMemUsage]);
+   const [memSnapshot, setMemSnapshot] = useState({
+      total_memory_kB: 0,
+      free_memory_kB: 0,
+      usage_percent: 0,
+   });
 
    useEffect(() => {
+      if (connStatus !== ConnectionStatus.Ok) {
+         return;
+      }
       const interval = setInterval(() => {
-         if (connStatus === ConnectionStatus.Ok) {
-            fetchMemorySnapshot();
-         }
+         fetchMemorySnapshot().then((data) => {
+            if (data) {
+               setMemSnapshot(data);
+            }
+         });
       }, Config.POLL_PERIOD_MS);
       return () => {
          clearInterval(interval);
       };
-   }, [connStatus, fetchMemorySnapshot]);
+   }, [connStatus, setMemSnapshot]);
 
-   const memTotalMB = (memTotal / 1024).toFixed(0);
+   const memTotalMB = (memSnapshot.total_memory_kB / 1024).toFixed(0);
    const memTotalGB = (memTotalMB / 1024).toFixed(2);
-   const memFreeMB = (memFree / 1024).toFixed(0);
+   const memFreeMB = (memSnapshot.free_memory_kB / 1024).toFixed(0);
    const memFreeGB = (memFreeMB / 1024).toFixed(2);
    const memUsedMB = memTotalMB - memFreeMB;
    const memUsedGB = (memTotalGB - memFreeGB).toFixed(2);
 
    return (
       <Card title="Memory">
-         <MeterBar fillPercent={`${memUsage}%`} />
+         <MeterBar fillPercent={`${memSnapshot.usage_percent.toFixed(0)}%`} />
          <FlexTable columns={3}>
             <Column>
                <Row>
