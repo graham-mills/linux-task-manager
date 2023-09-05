@@ -16,6 +16,10 @@
    cursor: pointer;
 }
 
+.proc-table th.sortable:hover {
+   background-color: #eee;
+}
+
 .proc-table tr:nth-child(even) {
    background: #ccc;
 }
