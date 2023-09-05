@@ -14,14 +14,14 @@ For the API server:
 
 For the React app:
 
-- [node](https://nodejs.org/)
-- [npm](https://www.npmjs.com/)
-    * [React](https://react.dev/)
+- [React](https://react.dev/)
+- [Axios](https://axios-http.com/)
+- [Jest](https://jestjs.io/)
 
 ## Building
 
-1. In `backend`, run `make install` and then `make build-release`
-2. In `frontend`, run `npm install` and then `npm build`
+1. In `/backend`, run `make install` and then `make build-release`
+2. In `/frontend`, run `npm install` and then `npm run build`
 
 ## Running
 
@@ -31,8 +31,8 @@ With Docker:
 
 Without Docker:
 
-1. In `backend`, run `make serve`
-2. In `frontend`, run `npm run start`
+1. In `/backend`, run `make serve`
+2. In `/frontend`, run `npm run start`
 
 Once running, browse to `http://localhost:3000` to view the React app or try one of the following endpoints:
 
